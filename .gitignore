@@ -1,3 +1,4 @@
-web/ssl/
+web/ssl/server.crt
+web/ssl/server.key
 .direnv
 .envrc
