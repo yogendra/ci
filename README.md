@@ -5,12 +5,12 @@
 ## Requirements
 
 - Publically accessible docker machine (if you want to expose this to github)
-  - I use docker-machine on gcp
-  - Load balancer with reserved IP
-  - Cloud dns pointing to LB
-- docker-machine
-- docker-compose
-- docker
+  - I use docker-machine on gcp (see my setup [here](#my-gcp-docker-machine))
+  - Alternatively, you can use [Serveo](https://serveo.net/) to set up SSH tunnels for exposing your CI/CD externally.
+- Tools:
+  - docker-machine
+  - docker-compose
+  - docker
 - Patience - Very important
 
 ## What to do?
@@ -21,14 +21,37 @@
   - Happy to get a better way to generate certs at runtime. Send a PR
 - Replace `ci.gcp.yogendra.me` everywhere with your domain.
 - `docker-compose up -d`
+- Open `https://<domain>/jenkins/blueocean` and login. (credentials below)
 
 ## URLS and Passwords
 
-| **Service** | **Address**              | **Credentials** |
-| ----------- | ------------------------ | --------------- |
-| Jenkins     | https://<domain>/jenkins | admin:admin123  |
-| Nexus       | https://<domain>/nexus   | admin:admin123  |
-| Sonar       | https://<domain>/sonar   | admin:admin123  |
+| **Service** | **Address**                | **Credentials** |
+| ----------- | -------------------------- | --------------- |
+| Jenkins     | https://<domain>/jenkins   | admin:admin123  |
+| Nexus       | https://<domain>/nexus     | admin:admin123  |
+| Sonar       | https://<domain>/sonarqube | admin:admin     |
+
+## My GCP Docker Machine
+
+I am using a fixed IP based VM and a cloud dns entry pointing to it. Here is what my docker-create commmand look like:
+
+```
+export GOOGLE_ADDRESS=aaa.bbb.ccc.ddd
+export GOOGLE_DISK_SIZE=40
+export GOOGLE_MACHINE_IMAGE=ubuntu-os-cloud/global/images/ubuntu-minimal-1604-xenial-v20190108a
+export GOOGLE_MACHINE_TYPE=n1-highmem-2
+export GOOGLE_PROJECT=my-project-name
+export GOOGLE_TAGS=http-server,https-server
+export GOOGLE_ZONE=us-central1-f
+
+docker-machine create ci-host
+```
+
+This creates a VM with 40 GB Disk and 13 GB RAM. Also, tags help in opening firewall automatically. Replace aaa.bbb.ccc.ddd with your own IP.
+
+You can reserve an IP [here](https://console.cloud.google.com/networking/addresses/list). Just click on "Reserver Static Address" and follow the instrucations.
+
+After reserving IP, create a Cloud DNS Hosted Zone (if you don't have one) [here](https://console.cloud.google.com/net-services/dns/zones), and create an A record in the hosted zone to point to IP you reserved earlier.
 
 ## Troubleshooting
 

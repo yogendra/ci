@@ -12,12 +12,12 @@
         <server>
             <id>nexus-snapshots</id>
             <username>admin</username>
-            <password>{AahhiAzvpzQHVMsm3s65AnezsF5tWi8wr2r8Jzx51LY3QnWZLLMIENeLPmXxGEf+}</password>
+            <password>admin123</password>
         </server>
         <server>
             <id>nexus-releases</id>
             <username>admin</username>
-            <password>{AahhiAzvpzQHVMsm3s65AnezsF5tWi8wr2r8Jzx51LY3QnWZLLMIENeLPmXxGEf+}</password>
+            <password>admin123</password>
         </server>
     </servers>
 
@@ -28,7 +28,7 @@
             <repositories>
                 <repository>
                     <id>maven-release</id>
-                    <url>http://ci.gcp.yogendra.me:18081/repository/maven-public</url>
+                    <url>https://ci.gcp.yogendra.me/nexus/repository/maven-public</url>
                     <name>maven-release</name>
                     <snapshots>
                         <enabled>true</enabled>
@@ -39,7 +39,7 @@
                 <pluginRepository>
                     <id>central</id>
                     <name>maven-release-plugins</name>
-                    <url>http://ci.gcp.yogendra.me:18081/repository/maven-public</url>
+                    <url>https://ci.gcp.yogendra.me/nexus/repository/maven-public</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
