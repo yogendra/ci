@@ -21,15 +21,15 @@
   - Happy to get a better way to generate certs at runtime. Send a PR
 - Replace `ci.gcp.yogendra.me` everywhere with your domain.
 - `docker-compose up -d`
-- Open `https://<domain>/jenkins/blueocean` and login. (credentials below)
+- Open `https://your.own.domain/jenkins/blueocean` and login. (credentials below)
 
 ## URLS and Passwords
 
-| **Service** | **Address**                | **Credentials** |
-| ----------- | -------------------------- | --------------- |
-| Jenkins     | https://<domain>/jenkins   | admin:admin123  |
-| Nexus       | https://<domain>/nexus     | admin:admin123  |
-| Sonar       | https://<domain>/sonarqube | admin:admin     |
+| **Service** | **Address**                       | **Credentials** |
+| ----------- | --------------------------------- | --------------- |
+| Jenkins     | https://your.own.domain/jenkins   | admin:admin123  |
+| Nexus       | https://your.own.domain/nexus     | admin:admin123  |
+| Sonar       | https://your.own.domain/sonarqube | admin:admin     |
 
 ## My GCP Docker Machine
 
@@ -57,7 +57,7 @@ After reserving IP, create a Cloud DNS Hosted Zone (if you don't have one) [here
 
 ### Jenkins/Sonar/Nexus is not reachable?
 
-https://<domain>/jenkins times out? Check the firwall. If your docker containers are running, then your firewall is the biggest suspect.
+https://your.own.domain/jenkins times out? Check the firwall. If your docker containers are running, then your firewall is the biggest suspect.
 
 ## Pending / Wishlist
 
