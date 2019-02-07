@@ -25,11 +25,14 @@
 
 ## URLS and Passwords
 
-| **Service** | **Address**                       | **Credentials** |
-| ----------- | --------------------------------- | --------------- |
-| Jenkins     | https://your.own.domain/jenkins   | admin:admin123  |
-| Nexus       | https://your.own.domain/nexus     | admin:admin123  |
-| Sonar       | https://your.own.domain/sonarqube | admin:admin     |
+| **Service** | **Address**                        | **Credentials** |
+| ----------- | ---------------------------------- | --------------- |
+| Jenkins     | https://your.own.domain/jenkins    | admin:admin123  |
+| Nexus       | https://your.own.domain/nexus      | admin:admin123  |
+| Sonar       | https://your.own.domain/sonarqube  | admin:admin     |
+| Minio       |                                    |                 |
+| Concourse   | https://concourse.your.own.domain/ |                 |
+| Vault       |                                    |                 |
 
 ## My GCP Docker Machine
 
@@ -52,6 +55,17 @@ This creates a VM with 40 GB Disk and 13 GB RAM. Also, tags help in opening fire
 You can reserve an IP [here](https://console.cloud.google.com/networking/addresses/list). Just click on "Reserver Static Address" and follow the instrucations.
 
 After reserving IP, create a Cloud DNS Hosted Zone (if you don't have one) [here](https://console.cloud.google.com/net-services/dns/zones), and create an A record in the hosted zone to point to IP you reserved earlier.
+
+## Regular operations
+
+### Add secret to vault for concourse
+
+```
+docker-compose exec concourse-config bash -l -c 'source /vault/server/init_vars && vault write secret/concourse/main/main/myvalue value=foo'
+```
+### Add files to minio
+
+
 
 ## Troubleshooting
 

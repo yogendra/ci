@@ -22,26 +22,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/libexec/docker/bin/docker
       - jenkins-data:/var/lib/jenkins/
-    environment:
-      - JENKINS_ADMIN_USER=admin
-      - JENKINS_ADMIN_PASSWORD=admin123
+    env_file: jenkins/.env
 
   sonarqube:
     build: ./sonarqube
-    environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonarqube-db:5432/sonarqube
-      - SONARQUBE_JDBC_USERNAME=sonarqube
-      - SONARQUBE_JDBC_PASSWORD=sonarqube
+    env_file: sonarqube/.env
     networks:
       - backend
   sonarqube-db:
     build: ./sonarqube-db
+    env_file: sonarqube-db/.env
     networks:
       - backend
-    environment:
-      - POSTGRES_USER=sonarqube
-      - POSTGRES_PASSWORD=sonarqube
-      - POSTGRES_DB=sonarqube
     volumes:
       - sonarqube-db-data:/var/lib/postgresql/data
       - sonarqube-db:/var/lib/postgresql
@@ -53,13 +45,97 @@ services:
     volumes:
       - nexus-data:/nexus-data
 
+  concourse-config:
+    image: eugenmayer/concourse-configurator:4.x
+    env_file: concourse-config/.env
+    networks:
+      - backend
+    volumes:
+      - concourse-keys-web:/concourse-keys/web
+      - concourse-keys-worker:/concourse-keys/worker
+      - vault-server-config:/vault/server
+      - vault-client-config:/vault/concourse
+    restart: unless-stopped
+
+  vault:
+    restart: unless-stopped # required so that it retries until conocurse-db comes up
+    image: vault:0.11.0
+    env_file: vault/.env
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - concourse-config
+    networks:
+      - backend
+    #ports:
+    #  - 8200:8200
+    volumes:
+      - vault-server-config:/vault/config
+      - vault-server-data:/vault/file
+    command: vault server -config /vault/config/vault.hcl
+
+  concourse-db:
+    image: postgres:10.1
+    env_file: concourse-db/.env
+    networks:
+      - backend
+    volumes:
+      - concourse-db:/var/lib/postgresql
+      - concourse-db-data:/var/lib/postgresql/data
+
+  concourse-web:
+    image: concourse/concourse:4.2.1
+    command: web
+    depends_on:
+      - concourse-config
+      - concourse-db
+      - vault
+    env_file: concourse-web/.env
+    networks:
+      - backend
+    volumes:
+      - concourse-keys-web:/concourse-keys
+      - vault-client-config:/vault/client
+    restart: on-failure # required so that it retries until conocurse-db comes up
+
+  concourse-worker:
+    image: eugenmayer/concourse-worker-solid:4.2.1
+    privileged: true
+    networks:
+      - backend
+    depends_on:
+      - concourse-config
+      - concourse-web
+    env_file: concourse-worker/.env
+    volumes:
+      - concourse-keys-worker:/concourse-keys
+
+  minio:
+    image: minio/minio
+    command: server /data
+    env_file: minio/.env
+    networks:
+      - backend
+    volumes:
+      - minio-data:/data
+      - minio-config:/root/.minio
+
 volumes:
   jenkins-data:
-  sonarqube-data:
-  sonarqube-conf:
+  # sonarqube-data:
+  # sonarqube-conf:
   sonarqube-db-data:
   sonarqube-db:
   nexus-data:
+  concourse-db:
+  concourse-db-data:
+  concourse-keys-web:
+  concourse-keys-worker:
+  vault-server-data:
+  vault-server-config:
+  vault-client-config:
+  minio-data:
+  minio-config:
 
 networks:
   frontend:
