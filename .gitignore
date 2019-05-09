@@ -2,3 +2,5 @@ web/ssl/*
 .direnv
 .envrc
 */.env
+jenkins/downloads
+
