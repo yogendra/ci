@@ -84,7 +84,7 @@ services:
       - concourse-db-data:/var/lib/postgresql/data
 
   concourse-web:
-    image: concourse/concourse:4.2.1
+    image: concourse/concourse:5
     command: web
     depends_on:
       - concourse-config
@@ -99,7 +99,7 @@ services:
     restart: on-failure # required so that it retries until conocurse-db comes up
 
   concourse-worker:
-    image: eugenmayer/concourse-worker-solid:4.2.1
+    image: concourse/concourse:5
     privileged: true
     networks:
       - backend
